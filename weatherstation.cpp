@@ -12,7 +12,7 @@ WeatherStation::WeatherStation(bool purge_database, bool debugmode)
 
 void WeatherStation::start_acquisition()
 {
-    float temperature, humidity,  airpressure = 0;
+    float temperature, humidity, airpressure = 0;
     bool success = true;
 
     this->bmp085sensor = new BMP085();
