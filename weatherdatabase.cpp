@@ -6,6 +6,7 @@
  */
 
 #include "weatherdatabase.h"
+#include <QSqlError>
 
 WeatherDatabase::WeatherDatabase()
 /*
@@ -46,6 +47,7 @@ void WeatherDatabase::OpenDatabase()
         query.exec("CREATE TABLE IF NOT EXISTS temperaturedata (datetime DATETIME, temperature FLOAT)");
         query.exec("CREATE TABLE IF NOT EXISTS humiditydata (datetime DATETIME, humidity FLOAT)");
         query.exec("CREATE TABLE IF NOT EXISTS airpressuredata (datetime DATETIME, airpressure FLOAT)");
+        query.exec("CREATE TABLE IF NOT EXISTS imagedata (id SMALLINT, image LONGBLOB, PRIMARY KEY (id))");
 
         this->database_opened = true;
     }
@@ -66,7 +68,7 @@ void WeatherDatabase::CloseDatabase()
 void WeatherDatabase::AddTemperatureData(float temperature)
 /*
  * Add temperature data to the weatherdatabase.
- * Also stores the date, time and unit
+ * Also stores the date and time
  *
  * in:  temperature  Temperature collected from sensor.
  * out: none
@@ -86,7 +88,7 @@ void WeatherDatabase::AddTemperatureData(float temperature)
 void WeatherDatabase::AddHumidityData(float humidity)
 /*
  * Add humidity data to the weatherdatabase.
- * Also stores the date, time and unit
+ * Also stores the date and time
  *
  * in:  humidity  Humidity collected from sensor.
  * out: none
@@ -106,7 +108,7 @@ void WeatherDatabase::AddHumidityData(float humidity)
 void WeatherDatabase::AddAirpressureData(float airpressure)
 /*
  * Add air pressure data to the weatherdatabase.
- * Also stores the date, time and unit
+ * Also stores the date and time
  *
  * in:  airpressure  Airpressure collected from sensor.
  * out: none
@@ -119,6 +121,34 @@ void WeatherDatabase::AddAirpressureData(float airpressure)
         query.prepare("INSERT INTO airpressuredata "
                       "VALUES (NOW(), :airpressure)");
         query.bindValue(":airpressure", airpressure);
+        query.exec();
+    }
+}
+
+void WeatherDatabase::AddImageData(char* imagepath)
+/*
+ * Add image data to the weatherdatabase.
+ *
+ * in:  imagepath  Path to image.
+ * out: none
+ */
+{
+    QSqlQuery query;
+
+    QByteArray bytearray;
+    QFile f(imagepath);
+
+    if(f.open(QIODevice::ReadOnly))
+    {
+        bytearray = f.readAll();
+        f.close();
+    }
+
+    if(this->database_opened)
+    {
+        query.prepare("REPLACE INTO imagedata "
+                      "VALUES (0, :image)");
+        query.bindValue(":image", bytearray);
         query.exec();
     }
 }
@@ -150,6 +180,7 @@ void WeatherDatabase::PurgeDatabase()
             query.exec("CREATE TABLE IF NOT EXISTS temperaturedata (datetime DATETIME, temperature FLOAT)");
             query.exec("CREATE TABLE IF NOT EXISTS humiditydata (datetime DATETIME, humidity FLOAT)");
             query.exec("CREATE TABLE IF NOT EXISTS airpressuredata (datetime DATETIME, airpressure FLOAT)");
+            query.exec("CREATE TABLE IF NOT EXISTS imagedata (id SMALLINT, image LONGBLOB, PRIMARY KEY (id))");
         }
     }
 }

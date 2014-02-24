@@ -4,6 +4,8 @@
 #include <bmp085.h>
 #include <dht22sensor.h>
 #include <weatherdatabase.h>
+#include <unistd.h>
+#include <errno.h>
 
 #define ACQUISITION_INTERVAL (60) //seconds
 

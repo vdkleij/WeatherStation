@@ -12,6 +12,7 @@
 #include <QSqlQuery>
 #include <QVariant>
 #include <QDebug>
+#include <QFile>
 
 class WeatherDatabase
 {
@@ -24,6 +25,7 @@ public:
     void AddTemperatureData(float temperature);
     void AddHumidityData(float humidity);
     void AddAirpressureData(float airpressure);
+    void AddImageData(char* imagepath);
 
     void PurgeDatabase();
 

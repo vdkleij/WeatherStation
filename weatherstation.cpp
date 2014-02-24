@@ -36,9 +36,13 @@ void WeatherStation::start_acquisition()
 
         bmp085sensor->read_pressure(&airpressure);
 
+        // Take picture
+        system("raspistill -n -w 320 -h 240 -q 100 -o image.jpg");
+
         weatherdatabase->AddAirpressureData(airpressure);
         weatherdatabase->AddHumidityData(humidity);
         weatherdatabase->AddTemperatureData(temperature);
+        weatherdatabase->AddImageData("image.jpg");
 
         sleep(ACQUISITION_INTERVAL);
     }
